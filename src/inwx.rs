@@ -159,6 +159,10 @@ impl<'a> Inwx<'a> {
                     value: RpcRequestParameterValue::String(name),
                 },
                 RpcRequestParameter {
+                    name: "ttl",
+                    value: RpcRequestParameterValue::Integer(300),
+                },
+                RpcRequestParameter {
                     name: "content",
                     value: RpcRequestParameterValue::String(content.to_owned()),
                 },
