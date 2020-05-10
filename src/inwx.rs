@@ -147,6 +147,7 @@ impl<'a> Inwx<'a> {
     pub fn create_txt_record(&mut self, domain: &str, content: &str) -> Result<(), InwxError> {
         let (domain, name) = self.split_domain(domain)?;
 
+	info!("creating record for domain {} with name {}", domain, name);
         let request = RpcRequest::new(
             "nameserver.createRecord",
             &[
@@ -156,11 +157,11 @@ impl<'a> Inwx<'a> {
                 },
                 RpcRequestParameter {
                     name: "name",
-                    value: RpcRequestParameterValue::String(name),
+                    value: RpcRequestParameterValue::String("_acme-challenge".to_owned()),
                 },
                 RpcRequestParameter {
                     name: "ttl",
-                    value: RpcRequestParameterValue::Integer(300),
+                    value: RpcRequestParameterValue::Int(300),
                 },
                 RpcRequestParameter {
                     name: "content",
@@ -190,7 +191,7 @@ impl<'a> Inwx<'a> {
                 },
                 RpcRequestParameter {
                     name: "name",
-                    value: RpcRequestParameterValue::String(name.to_owned()),
+                    value: RpcRequestParameterValue::String("_acme-challenge".to_owned()),
                 },
                 RpcRequestParameter {
                     name: "domain",

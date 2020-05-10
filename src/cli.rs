@@ -75,7 +75,7 @@ fn read_config(path: &str) -> Result<Config, ()> {
 }
 
 fn create(config: &Config, domain: &str, value: &str) -> Result<(), ()> {
-    info!("Creating TXT record...");
+    info!("Creating TXT record for {} ...", domain);
 
     let is_ote = execute_api_commands(&config, &domain, |api| {
         api.create_txt_record(&domain, &value)?;
@@ -101,8 +101,8 @@ fn create(config: &Config, domain: &str, value: &str) -> Result<(), ()> {
                 break;
             }
 
-            wait_secs *= 2;
-
+            wait_secs += 20;
+	    info!("could not fine value, sleeping...");
             sleep(Duration::from_secs(wait_secs));
         }
 

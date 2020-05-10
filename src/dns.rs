@@ -49,6 +49,7 @@ pub fn lookup_real_domain(dns_server: &str, domain: &str) -> String {
     let mut depth = 0;
 
     let mut domain = domain.to_owned();
+
     while let Some(real_name) = check_cname(dns_server, &domain) {
         debug!("Using {} for {}", real_name, domain);
         domain = real_name;
@@ -65,18 +66,26 @@ pub fn lookup_real_domain(dns_server: &str, domain: &str) -> String {
 
 pub fn check_txt_record(dns_server: &str, domain: &str, value: &str) -> bool {
     let client = dns_client(dns_server);
+    
     let name = match Name::from_str(&add_trailing_dot(domain)) {
         Ok(name) => name,
         Err(_) => return false,
     };
+ 
+    info!("got name {} domain {} value {}", name, domain, value);   
 
     if let Ok(response) = client.query(&name, DNSClass::IN, RecordType::TXT) {
+	info!("respone ok");
+	info!("resp: {}", response.response_code());
         for record in response.answers() {
+	    info!("got records");
             if record.name().to_utf8().to_lowercase() == name.to_utf8().to_lowercase() {
+ 		info!("record name matches");
                 if let RData::TXT(data) = record.rdata() {
+		    info!("got txt data");
                     for data in data.txt_data().iter() {
                         let data = String::from_utf8_lossy(data);
-
+			info!("data: {}", data);
                         if data == value {
                             return true;
                         }
