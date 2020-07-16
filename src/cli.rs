@@ -102,7 +102,7 @@ fn create(config: &Config, domain: &str, value: &str) -> Result<(), ()> {
             }
 
             wait_secs += 20;
-	    info!("could not fine value, sleeping...");
+	    info!("could not find dns recrod, sleeping...");
             sleep(Duration::from_secs(wait_secs));
         }
 
@@ -186,6 +186,7 @@ pub fn run() -> Result<(), ()> {
 
     if let Some(matches) = matches.subcommand_matches("create") {
         let config = read_config(matches.value_of("configfile").unwrap())?;
+ 
         let domain = lookup_real_domain(
             &config.options.dns_server,
             matches.value_of("domain").unwrap(),

@@ -66,11 +66,20 @@ pub fn lookup_real_domain(dns_server: &str, domain: &str) -> String {
 
 pub fn check_txt_record(dns_server: &str, domain: &str, value: &str) -> bool {
     let client = dns_client(dns_server);
+
+    info!("input domain: {}", domain);
     
-    let name = match Name::from_str(&add_trailing_dot(domain)) {
+    let pre = "_acme-challenge.".to_string(); 
+
+    let new = &[pre, domain.to_string()].concat();
+
+    info!("pre domain: {}", new);	
+
+    let name = match Name::from_str(&add_trailing_dot(new)) {
         Ok(name) => name,
         Err(_) => return false,
     };
+
  
     info!("got name {} domain {} value {}", name, domain, value);   
 
@@ -79,6 +88,7 @@ pub fn check_txt_record(dns_server: &str, domain: &str, value: &str) -> bool {
 	info!("resp: {}", response.response_code());
         for record in response.answers() {
 	    info!("got records");
+	    info!("rec: {}", record.name());
             if record.name().to_utf8().to_lowercase() == name.to_utf8().to_lowercase() {
  		info!("record name matches");
                 if let RData::TXT(data) = record.rdata() {
